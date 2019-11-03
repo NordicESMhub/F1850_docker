@@ -30,7 +30,7 @@ ENV AR=ar
 
 ENV USER=cesm
 
-ENV CESM_PES=4
+ENV CESM_PES=16
 
 RUN sed -i -e "s/\$CESM_PES/$CESM_PES/g" /home/cesm/.cime/config_machines.xml && \
     create_newcase --case /home/cesm/cases/F1850 --compset F1850 \
