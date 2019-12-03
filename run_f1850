@@ -2,4 +2,10 @@
 
 mkdir -p $HOME/archive/cases
 
-cp -R $HOME/cases/F1850 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case1 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case2 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case3 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case4 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case5 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case6 $HOME/archive/cases/.
+cp -R $HOME/cases/F1850case7 $HOME/archive/cases/.
