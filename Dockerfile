@@ -1,4 +1,4 @@
-FROM quay.io/biocontainers/cesm:2.1.1--py37he9b5208_1
+FROM quay.io/nordicesmhub/cesm_libs:latest
 
 #####EXTRA LABELS#####
 LABEL autogen="no" \ 
@@ -6,40 +6,40 @@ LABEL autogen="no" \
     version="2" \
     software.version="2.1.1" \ 
     about.summary="Community Earth System Model" \ 
-    base_image="cesm:2.1.1--py37he9b5208_1" \
+    base_image="quay.io/nordicesmhub/cesm_libs" \
     about.home="http://www.cesm.ucar.edu/models/simpler-models/N1850/index.html" \
     about.license="Copyright (c) 2017, University Corporation for Atmospheric Research (UCAR). All rights reserved." 
       
 MAINTAINER Anne Fouilloux <annefou@geo.uio.no>
 
-RUN ln -s /usr/local/bin/x86_64-conda_cos6-linux-gnu-ar /usr/local/bin/ar
+ENV USER=root
+ENV HOME=/root
 
-RUN adduser -D cesm -G users
+RUN mkdir -p $HOME/.cime \
+             $HOME/work \
+             $HOME/inputdata \
+             $HOME/archive \
+             $HOME/cases 
 
-USER cesm
+COPY config_files/* $HOME/.cime/
 
-RUN mkdir -p /home/cesm/.cime && \
-    mkdir -p /home/cesm/work \
-             /home/cesm/inputdata \
-             /home/cesm/archive \
-             /home/cesm/cases 
+RUN cd $HOME \
+    && git clone -b release-cesm2.1.1 https://github.com/ESCOMP/CESM.git \
+    && cd CESM \
+    && sed -i.bak "s/'checkout'/'checkout', '--trust-server-cert', '--non-interactive'/" ./manage_externals/manic/repository_svn.py \
+    && ./manage_externals/checkout_externals
 
-COPY config_files/* /home/cesm/.cime/
+ENV CESM_PES=18
 
-ENV AR=ar
-
-ENV USER=cesm
-
-ENV CESM_PES=16
-
-RUN sed -i -e "s/\$CESM_PES/$CESM_PES/g" /home/cesm/.cime/config_machines.xml && \
-    create_newcase --case /home/cesm/cases/F1850 --compset F1850 \
+RUN sed -i -e "s/\$CESM_PES/$CESM_PES/g" $HOME/.cime/config_machines.xml \
+    && cd $HOME/CESM/cime/scripts \
+    && ./create_newcase --case $HOME/cases/F1850 --compset F1850 \
     --res f19_g17 --machine espresso --run-unsupported && \
-    cd /home/cesm/cases/F1850                          && \
+    cd $HOME/cases/F1850                          && \
     ./case.setup && ./case.build
     
-WORKDIR /home/cesm/cases/F1850
+WORKDIR $HOME/cases/F1850
 
-COPY run_f1850 /home/cesm/cases/F1850
+COPY run_f1850 $HOME/cases/F1850
 
-ENTRYPOINT ./run_f1850
+CMD ["/bin/bash"]
