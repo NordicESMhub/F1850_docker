@@ -38,6 +38,6 @@ drwxrwxr-x.  8 centos users        4096 Nov  9 15:21 archive
 
 ```
 docker pull quay.io/nordicesmhub/cesm_f1850:latest
-docker run -i -v /opt/uio/inputdata:/home/cesm/inputdata -v /opt/uio/archive:/home/cesm/archive  -t quay.io/nordicesmhub/cesm_f1850:latest
+docker run -i -v /opt/uio/inputdata:/root/inputdata -v /opt/uio/archive:/root/archive  -t quay.io/nordicesmhub/cesm_f1850:latest
 ```
 
